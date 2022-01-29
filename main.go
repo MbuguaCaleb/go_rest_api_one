@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/MbuguaCaleb/go_rest_api_one/database"
 	"github.com/gofiber/fiber/v2"
 )
-
 
 //context is whatever that comes with your request
 func welcome(c *fiber.Ctx)error  {
@@ -14,6 +14,7 @@ func welcome(c *fiber.Ctx)error  {
 
 func main() {
 
+	database.ConnectDb()
 	//creating an instance of my fiber app
 	app := fiber.New()
 	
