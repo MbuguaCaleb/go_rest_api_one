@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"errors"
+
 	"github.com/MbuguaCaleb/go_rest_api_one/database"
 	"github.com/MbuguaCaleb/go_rest_api_one/models"
 	"github.com/gofiber/fiber/v2"
@@ -25,6 +27,7 @@ func CreateResponseUser(userModel models.User) UserSerializer {
 
 //Endpoints
 func CreateUser (c *fiber.Ctx) error {
+
 	//I am creating an empty model instance
 	var user models.User
 
@@ -53,3 +56,33 @@ func GetUsers(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(responseUsers)
 }
+
+func findUser (id int, user *models.User) error{
+	database.Database.Db.Find(&user,"id = ?",id)
+	if user.ID == 0{
+		return errors.New("user does not exist")
+	}
+	return nil
+
+}
+func GetUser(c *fiber.Ctx) error{
+
+	//because i am passing an Integer Parameter
+	id, err := c.ParamsInt("id")
+
+	var user models.User
+
+	if err != nil{
+		return c.Status(400).JSON("Please ensure that :id is an Integer")
+	}
+
+	if err := findUser(id,&user); err!=nil{
+		return c.Status(400).JSON(err.Error())
+	}
+
+	responseUser :=CreateResponseUser(user)
+
+	return c.Status(200).JSON(responseUser)
+
+}
+
