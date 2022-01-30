@@ -20,6 +20,8 @@ func setUpRoutes(app *fiber.App){
 
 	//User endpoints
 	app.Post("/api/users", routes.CreateUser)
+	app.Get("/api/users", routes.GetUsers)
+
 
 }
 

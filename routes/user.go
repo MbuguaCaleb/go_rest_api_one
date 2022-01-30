@@ -19,18 +19,17 @@ type UserSerializer struct{
 //Serializer  return data into simple readbale format
 //It will be used as a helper for my  endpoints
 func CreateResponseUser(userModel models.User) UserSerializer {
-	return UserSerializer{ID:userModel.ID,FirstName: userModel.FirstName,LastName: userModel.LastName}
+	 return UserSerializer{ID:userModel.ID,FirstName: userModel.FirstName,LastName: userModel.LastName}
 }
 
 
 //Endpoints
 func CreateUser (c *fiber.Ctx) error {
+	//I am creating an empty model instance
 	var user models.User
 
 	//binds my request body to my Struct
-	err := c.BodyParser(&user)
-
-	if err != nil{
+	if err := c.BodyParser(&user); err != nil{
 		return c.Status(400).JSON(err.Error())
 	}
 
@@ -39,4 +38,18 @@ func CreateUser (c *fiber.Ctx) error {
 	responseUser := CreateResponseUser(user)
 	return c.Status(200).JSON(responseUser)
 
+}
+
+func GetUsers(c *fiber.Ctx) error {
+	users := []models.User{}
+
+	database.Database.Db.Find(&users)
+	responseUsers := []UserSerializer{}
+
+	for _, user := range users {
+		responseUser := CreateResponseUser(user)
+		responseUsers = append(responseUsers, responseUser)
+	}
+
+	return c.Status(200).JSON(responseUsers)
 }
